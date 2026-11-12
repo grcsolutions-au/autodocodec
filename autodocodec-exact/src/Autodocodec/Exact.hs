@@ -243,6 +243,7 @@ goV value = \case
   CommentCodec comment c ->
     withContext (ExactParseContextPieceComment comment) $
       goV value c
+  SchemaHintsCodec _ c -> goV value c
   ReferenceCodec ref c ->
     withContext (ExactParseContextPieceReference ref) $
       goV value c

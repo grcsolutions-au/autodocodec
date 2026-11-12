@@ -228,6 +228,17 @@ data Codec context input output where
     Text ->
     ValueCodec input output ->
     ValueCodec input output
+  -- | A schema hints codec
+  --
+  -- This is used to add extra metadata, like a @format@ or an @example@, to the
+  -- schemas that are generated from a codec.
+  --
+  -- Like 'CommentCodec', this only affects documentation.
+  -- The hints are not checked during decoding.
+  SchemaHintsCodec ::
+    SchemaHints ->
+    ValueCodec input output ->
+    ValueCodec input output
   -- | A reference codec
   --
   -- This is used for naming a codec, so that recursive codecs can have a finite schema.
@@ -322,6 +333,34 @@ checkStringBounds StringBounds {..} s =
     _ -> case stringBoundsMaxLength of
       Just hi | T.length s > fromIntegral hi -> Left $ unwords ["String", show s, "is longer than the upper bound", show hi]
       _ -> Right s
+
+-- | Extra metadata for the schemas that are generated from a codec.
+--
+-- These are documentation only: they are not checked during decoding.
+-- Interpreters that don't have a place for a hint ignore it.
+data SchemaHints = SchemaHints
+  { -- | A short title for the schema
+    schemaHintsTitle :: !(Maybe Text),
+    -- | A format for the value, like @date@ or @int32@
+    schemaHintsFormat :: !(Maybe Text),
+    -- | An example value
+    schemaHintsExample :: !(Maybe JSON.Value),
+    -- | Numbers must be a multiple of this value
+    schemaHintsMultipleOf :: !(Maybe Scientific),
+    -- | Arrays must have at least this many items
+    schemaHintsMinItems :: !(Maybe Natural)
+  }
+  deriving (Show, Eq, Generic)
+
+emptySchemaHints :: SchemaHints
+emptySchemaHints =
+  SchemaHints
+    { schemaHintsTitle = Nothing,
+      schemaHintsFormat = Nothing,
+      schemaHintsExample = Nothing,
+      schemaHintsMultipleOf = Nothing,
+      schemaHintsMinItems = Nothing
+    }
 
 data Bounds a = Bounds
   { -- | Lower bound, inclusive
@@ -453,6 +492,7 @@ showCodecABit = ($ "") . (`evalState` S.empty) . go 0
         let csList = showString "[" . foldr (.) id (intersperse (showString ", ") cs) . showString "]"
         pure $ showParen (d > 10) $ showString "DiscriminatedUnionCodec " . showsPrec 11 propertyName . showString " _ " . csList
       CommentCodec comment c -> (\s -> showParen (d > 10) $ showString "CommentCodec " . showsPrec 11 comment . showString " " . s) <$> go 11 c
+      SchemaHintsCodec hints c -> (\s -> showParen (d > 10) $ showString "SchemaHintsCodec " . showsPrec 11 hints . showString " " . s) <$> go 11 c
       ReferenceCodec name c -> do
         alreadySeen <- gets (S.member name)
         if alreadySeen
@@ -930,7 +970,7 @@ optionalKeyWithDefaultCodec = OptionalKeyWithDefaultCodec
 --
 -- This is the non-empty list version of 'vectorCodec'.
 nonEmptyCodec :: ValueCodec input output -> ValueCodec (NonEmpty input) (NonEmpty output)
-nonEmptyCodec = bimapCodec parseNonEmptyList NE.toList . listCodec
+nonEmptyCodec = withMinItems 1 . bimapCodec parseNonEmptyList NE.toList . listCodec
   where
     parseNonEmptyList l = case NE.nonEmpty l of
       Nothing -> Left "Expected a nonempty list, but got an empty list."
@@ -1247,6 +1287,46 @@ optionalFieldOrNullWith' key c = orNullHelper $ OptionalKeyCodec key (maybeCodec
   [Text] ->
   ValueCodec input output
 (<??>) c ls = CommentCodec (T.unlines ls) c
+
+-- | Add a title to the schema of a codec
+--
+-- This is documentation only.
+--
+-- > withTitle t = SchemaHintsCodec emptySchemaHints {schemaHintsTitle = Just t}
+withTitle :: Text -> ValueCodec input output -> ValueCodec input output
+withTitle t = SchemaHintsCodec emptySchemaHints {schemaHintsTitle = Just t}
+
+-- | Add a format, like @date@ or @int32@, to the schema of a codec
+--
+-- This is documentation only: the format is not checked during decoding.
+--
+-- > withFormat f = SchemaHintsCodec emptySchemaHints {schemaHintsFormat = Just f}
+withFormat :: Text -> ValueCodec input output -> ValueCodec input output
+withFormat f = SchemaHintsCodec emptySchemaHints {schemaHintsFormat = Just f}
+
+-- | Add an example value to the schema of a codec
+--
+-- This is documentation only.
+--
+-- > withExample e = SchemaHintsCodec emptySchemaHints {schemaHintsExample = Just e}
+withExample :: JSON.Value -> ValueCodec input output -> ValueCodec input output
+withExample e = SchemaHintsCodec emptySchemaHints {schemaHintsExample = Just e}
+
+-- | Document that numbers must be a multiple of the given value
+--
+-- This is documentation only: it is not checked during decoding.
+--
+-- > withMultipleOf m = SchemaHintsCodec emptySchemaHints {schemaHintsMultipleOf = Just m}
+withMultipleOf :: Scientific -> ValueCodec input output -> ValueCodec input output
+withMultipleOf m = SchemaHintsCodec emptySchemaHints {schemaHintsMultipleOf = Just m}
+
+-- | Document that arrays must have at least the given number of items
+--
+-- This is documentation only: it is not checked during decoding.
+--
+-- > withMinItems n = SchemaHintsCodec emptySchemaHints {schemaHintsMinItems = Just n}
+withMinItems :: Natural -> ValueCodec input output -> ValueCodec input output
+withMinItems n = SchemaHintsCodec emptySchemaHints {schemaHintsMinItems = Just n}
 
 -- | Encode a 'HashMap', and decode any 'HashMap'.
 --
@@ -2105,7 +2185,21 @@ unsafeCodecViaAesonString ::
   -- | Name
   Text ->
   JSONCodec a
-unsafeCodecViaAesonString doc = bimapCodec (JSON.parseEither JSON.parseJSON . JSON.String) (unsafeAesonValueToString . JSON.toJSON) textCodec <?> doc
+unsafeCodecViaAesonString doc = unsafeCodecViaAesonStringWith textCodec <?> doc
+
+-- | Like 'unsafeCodecViaAesonString', but gives the string codec a name instead of a comment.
+--
+-- Schema generators use the name to name the schema, for example to make an OpenAPI @$ref@.
+-- This is just as unsafe as 'unsafeCodecViaAesonString'.
+unsafeNamedCodecViaAesonString ::
+  (FromJSON a, ToJSON a) =>
+  -- | Name
+  Text ->
+  JSONCodec a
+unsafeNamedCodecViaAesonString name = unsafeCodecViaAesonStringWith (StringCodec (Just name) emptyStringBounds)
+
+unsafeCodecViaAesonStringWith :: (FromJSON a, ToJSON a) => JSONCodec Text -> JSONCodec a
+unsafeCodecViaAesonStringWith = bimapCodec (JSON.parseEither JSON.parseJSON . JSON.String) (unsafeAesonValueToString . JSON.toJSON)
   where
     unsafeAesonValueToString v = case v of
       JSON.String s -> s

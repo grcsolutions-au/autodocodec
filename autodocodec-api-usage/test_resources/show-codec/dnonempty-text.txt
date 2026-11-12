@@ -1,11 +1,22 @@
 BimapCodec
   _
   _
-  (ArrayOfCodec
-     Nothing
-     (StringCodec
-        Nothing
-        StringBounds
-          { stringBoundsMinLength = Nothing
-          , stringBoundsMaxLength = Nothing
-          }))
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Nothing
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Nothing
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Just 1
+       }
+     (BimapCodec
+        _
+        _
+        (ArrayOfCodec
+           Nothing
+           (StringCodec
+              Nothing
+              StringBounds
+                { stringBoundsMinLength = Nothing
+                , stringBoundsMaxLength = Nothing
+                }))))

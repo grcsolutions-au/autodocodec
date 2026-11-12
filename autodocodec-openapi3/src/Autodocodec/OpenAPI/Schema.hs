@@ -10,6 +10,7 @@
 module Autodocodec.OpenAPI.Schema where
 
 import Autodocodec
+import Control.Applicative ((<|>))
 import Control.Lens (Lens', (&), (.~), (?~), (^.))
 import Control.Monad
 import Control.Monad.State.Lazy (StateT, evalStateT, runStateT)
@@ -134,6 +135,9 @@ declareNamedSchemaVia c' Proxy = evalStateT (go c') mempty
       CommentCodec t c -> do
         NamedSchema mName s <- go c
         pure $ NamedSchema mName $ addDoc t s
+      SchemaHintsCodec hints c -> do
+        NamedSchema mName s <- go c
+        pure $ NamedSchema mName $ addSchemaHints hints s
       ReferenceCodec n c -> do
         seenSchemas <- State.get
         case HashMap.lookup n seenSchemas of
@@ -228,6 +232,17 @@ declareNamedSchemaVia c' Proxy = evalStateT (go c') mempty
         { _schemaDescription = case _schemaDescription s of
             Nothing -> Just doc
             Just doc' -> Just $ doc <> "\n" <> doc'
+        }
+
+    -- Hints take precedence over what the schema already has.
+    addSchemaHints :: SchemaHints -> Schema -> Schema
+    addSchemaHints SchemaHints {..} s =
+      s
+        { _schemaTitle = schemaHintsTitle <|> _schemaTitle s,
+          _schemaFormat = schemaHintsFormat <|> _schemaFormat s,
+          _schemaExample = schemaHintsExample <|> _schemaExample s,
+          _schemaMultipleOf = schemaHintsMultipleOf <|> _schemaMultipleOf s,
+          _schemaMinItems = (fromIntegral <$> schemaHintsMinItems) <|> _schemaMinItems s
         }
 
     combineObjectSchemas :: [Schema] -> Schema

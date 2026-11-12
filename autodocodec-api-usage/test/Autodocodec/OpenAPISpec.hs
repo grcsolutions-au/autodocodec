@@ -141,40 +141,40 @@ spec = do
   describe "ToSchema equivalence" $ do
     -- Primitives and numerics
     openAPIToSchemaEquivalenceSpec @Bool
-    xdescribe "doesn't hold: codec lacks minLength/maxLength 1 and example" $
-      openAPIToSchemaEquivalenceSpec @Char
+    openAPIToSchemaEquivalenceSpec @Char
     openAPIToSchemaEquivalenceSpec @Text
     openAPIToSchemaEquivalenceSpec @LT.Text
     openAPIToSchemaEquivalenceSpec @String
     openAPIToSchemaEquivalenceSpec @Scientific
+    -- Matching this needs changes to how 'HashMapCodec' is named and rendered.
     xdescribe "doesn't hold: codec is unnamed, has additionalProperties and no description" $
       openAPIToSchemaEquivalenceSpec @JSON.Object
     openAPIToSchemaEquivalenceSpec @Int
     openAPIToSchemaEquivalenceSpec @Int8
     openAPIToSchemaEquivalenceSpec @Int16
-    xdescribe "doesn't hold: codec lacks format int32" $
-      openAPIToSchemaEquivalenceSpec @Int32
-    xdescribe "doesn't hold: codec lacks format int64" $
-      openAPIToSchemaEquivalenceSpec @Int64
+    openAPIToSchemaEquivalenceSpec @Int32
+    openAPIToSchemaEquivalenceSpec @Int64
     openAPIToSchemaEquivalenceSpec @Integer
     openAPIToSchemaEquivalenceSpec @Word
     openAPIToSchemaEquivalenceSpec @Word8
     openAPIToSchemaEquivalenceSpec @Word16
-    xdescribe "doesn't hold: codec lacks format int32" $
-      openAPIToSchemaEquivalenceSpec @Word32
-    xdescribe "doesn't hold: codec lacks format int64" $
-      openAPIToSchemaEquivalenceSpec @Word64
+    openAPIToSchemaEquivalenceSpec @Word32
+    openAPIToSchemaEquivalenceSpec @Word64
+    -- The default, 'False', so both schemas mean the same thing.
     xdescribe "doesn't hold: codec lacks exclusiveMinimum False" $
       openAPIToSchemaEquivalenceSpec @Natural
     -- Containers and wrappers
+    -- The codec does accept null, so its schema is the accurate one.
     xdescribe "doesn't hold: codec sets nullable True" $
       openAPIToSchemaEquivalenceSpec @(Maybe Text)
-    xdescribe "doesn't hold: codec is unnamed and lacks Left/Right titles" $
+    -- Naming it like openapi3 does would need Typeable constraints on the instance.
+    xdescribe "doesn't hold: codec is unnamed" $
       openAPIToSchemaEquivalenceSpec @(Either Bool Text)
     openAPIToSchemaEquivalenceSpec @[Text]
     openAPIToSchemaEquivalenceSpec @(Vector Text)
-    xdescribe "doesn't hold: codec lacks minItems 1" $
-      openAPIToSchemaEquivalenceSpec @(NonEmpty Text)
+    openAPIToSchemaEquivalenceSpec @(NonEmpty Text)
+    -- The codec removes duplicates instead of rejecting them, so this would
+    -- document a check that decoding doesn't do.
     xdescribe "doesn't hold: codec lacks uniqueItems True" $
       openAPIToSchemaEquivalenceSpec @(Set Text)
     openAPIToSchemaEquivalenceSpec @(Map Text Int)
@@ -183,20 +183,12 @@ spec = do
     openAPIToSchemaEquivalenceSpec @(Semigroup.First Text)
     openAPIToSchemaEquivalenceSpec @(Semigroup.Last Text)
     -- Time
-    -- The codec versions of these are unnamed, use the type name as a
-    -- description, and lack openapi3's format and example.
-    xdescribe "doesn't hold: codec is unnamed, lacks format date and example" $
-      openAPIToSchemaEquivalenceSpec @Day
-    xdescribe "doesn't hold: codec is unnamed, lacks format and example" $
-      openAPIToSchemaEquivalenceSpec @LocalTime
-    xdescribe "doesn't hold: codec is unnamed, lacks format and example" $
-      openAPIToSchemaEquivalenceSpec @UTCTime
-    xdescribe "doesn't hold: codec is unnamed, lacks format and example" $
-      openAPIToSchemaEquivalenceSpec @TimeOfDay
-    xdescribe "doesn't hold: codec is unnamed, lacks format date-time and example" $
-      openAPIToSchemaEquivalenceSpec @ZonedTime
-    xdescribe "doesn't hold: codec lacks multipleOf 1.0e-12" $
-      openAPIToSchemaEquivalenceSpec @NominalDiffTime
+    openAPIToSchemaEquivalenceSpec @Day
+    openAPIToSchemaEquivalenceSpec @LocalTime
+    openAPIToSchemaEquivalenceSpec @UTCTime
+    openAPIToSchemaEquivalenceSpec @TimeOfDay
+    openAPIToSchemaEquivalenceSpec @ZonedTime
+    openAPIToSchemaEquivalenceSpec @NominalDiffTime
 
 -- | Check that the 'OpenAPI.ToSchema' instance that is defined for @a@ outside
 -- of autodocodec produces exactly the same output as the codec-based one.

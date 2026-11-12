@@ -1,7 +1,23 @@
 EitherCodec
   DisjointUnion
-  (ObjectOfCodec
-     Nothing
-     (RequiredKeyCodec "Left" Nothing (BimapCodec _ _ ValueCodec)))
-  (ObjectOfCodec
-     Nothing (RequiredKeyCodec "Right" Nothing (BoolCodec Nothing)))
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Just "Left"
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Nothing
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (ObjectOfCodec
+        Nothing
+        (RequiredKeyCodec "Left" Nothing (BimapCodec _ _ ValueCodec))))
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Just "Right"
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Nothing
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (ObjectOfCodec
+        Nothing (RequiredKeyCodec "Right" Nothing (BoolCodec Nothing))))

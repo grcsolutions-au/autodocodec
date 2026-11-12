@@ -1,11 +1,25 @@
-CommentCodec
-  "Day"
-  (BimapCodec
-     _
-     _
-     (StringCodec
-        Nothing
-        StringBounds
-          { stringBoundsMinLength = Nothing
-          , stringBoundsMaxLength = Nothing
-          }))
+SchemaHintsCodec
+  SchemaHints
+    { schemaHintsTitle = Nothing
+    , schemaHintsFormat = Just "date"
+    , schemaHintsExample = Nothing
+    , schemaHintsMultipleOf = Nothing
+    , schemaHintsMinItems = Nothing
+    }
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Nothing
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Just (String "2016-07-22")
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (BimapCodec
+        _
+        _
+        (StringCodec
+           (Just "Day")
+           StringBounds
+             { stringBoundsMinLength = Nothing
+             , stringBoundsMaxLength = Nothing
+             })))

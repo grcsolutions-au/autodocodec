@@ -1,15 +1,31 @@
 EitherCodec
   DisjointUnion
-  (ObjectOfCodec
-     Nothing (RequiredKeyCodec "Left" Nothing (BoolCodec Nothing)))
-  (ObjectOfCodec
-     Nothing
-     (RequiredKeyCodec
-        "Right"
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Just "Left"
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Nothing
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (ObjectOfCodec
+        Nothing (RequiredKeyCodec "Left" Nothing (BoolCodec Nothing))))
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Just "Right"
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Nothing
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (ObjectOfCodec
         Nothing
-        (StringCodec
+        (RequiredKeyCodec
+           "Right"
            Nothing
-           StringBounds
-             { stringBoundsMinLength = Nothing
-             , stringBoundsMaxLength = Nothing
-             })))
+           (StringCodec
+              Nothing
+              StringBounds
+                { stringBoundsMinLength = Nothing
+                , stringBoundsMaxLength = Nothing
+                }))))
