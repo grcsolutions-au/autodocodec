@@ -9,6 +9,7 @@
 module Autodocodec.Swagger.Schema where
 
 import Autodocodec
+import Control.Applicative ((<|>))
 import Control.Monad
 import Data.Foldable (toList)
 import qualified Data.HashMap.Strict as HashMap
@@ -135,6 +136,9 @@ declareNamedSchemaVia c' Proxy = go c'
       CommentCodec t c -> do
         NamedSchema mName s <- go c
         pure $ NamedSchema mName $ addDoc t s
+      SchemaHintsCodec hints c -> do
+        NamedSchema mName s <- go c
+        pure $ NamedSchema mName $ addSchemaHints hints s
       ReferenceCodec n c -> do
         d <- look
         case InsOrdHashMap.lookup n d of
@@ -199,6 +203,20 @@ declareNamedSchemaVia c' Proxy = go c'
         ss2 <- goObject oc2
         pure $ ss1 ++ ss2
       BimapCodec _ _ oc -> goObject oc
+    -- Hints take precedence over what the schema already has.
+    addSchemaHints :: SchemaHints -> Schema -> Schema
+    addSchemaHints SchemaHints {..} s =
+      let ps = _schemaParamSchema s
+       in s
+            { _schemaTitle = schemaHintsTitle <|> _schemaTitle s,
+              _schemaExample = schemaHintsExample <|> _schemaExample s,
+              _schemaParamSchema =
+                ps
+                  { _paramSchemaFormat = schemaHintsFormat <|> _paramSchemaFormat ps,
+                    _paramSchemaMultipleOf = schemaHintsMultipleOf <|> _paramSchemaMultipleOf ps,
+                    _paramSchemaMinItems = (fromIntegral <$> schemaHintsMinItems) <|> _paramSchemaMinItems ps
+                  }
+            }
     addMDoc :: Maybe Text -> Schema -> Schema
     addMDoc = maybe id addDoc
     addDoc :: Text -> Schema -> Schema

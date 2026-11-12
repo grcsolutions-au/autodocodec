@@ -324,6 +324,7 @@ goValue = \case
       PossiblyJointUnion -> AnyOfSchema (goAnyOf (s1 :| [s2]))
   BimapCodec _ _ c -> goValue c
   CommentCodec t c -> CommentSchema t <$> goValue c
+  SchemaHintsCodec _ c -> goValue c
   ReferenceCodec name c -> do
     alreadySeen <- gets (S.member name)
     if alreadySeen

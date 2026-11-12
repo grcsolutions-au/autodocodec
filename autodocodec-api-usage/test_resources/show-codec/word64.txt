@@ -1,7 +1,17 @@
-BimapCodec
-  _
-  _
-  (IntegerCodec
-     Nothing
-     Bounds
-       { boundsLower = Just 0 , boundsUpper = Just 18446744073709551615 })
+SchemaHintsCodec
+  SchemaHints
+    { schemaHintsTitle = Nothing
+    , schemaHintsFormat = Just "int64"
+    , schemaHintsExample = Nothing
+    , schemaHintsMultipleOf = Nothing
+    , schemaHintsMinItems = Nothing
+    }
+  (BimapCodec
+     _
+     _
+     (IntegerCodec
+        Nothing
+        Bounds
+          { boundsLower = Just 0
+          , boundsUpper = Just 18446744073709551615
+          }))

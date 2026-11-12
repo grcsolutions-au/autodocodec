@@ -1,11 +1,25 @@
-CommentCodec
-  "LocalTime"
-  (BimapCodec
-     _
-     _
-     (StringCodec
-        Nothing
-        StringBounds
-          { stringBoundsMinLength = Nothing
-          , stringBoundsMaxLength = Nothing
-          }))
+SchemaHintsCodec
+  SchemaHints
+    { schemaHintsTitle = Nothing
+    , schemaHintsFormat = Just "yyyy-mm-ddThh:MM:ss"
+    , schemaHintsExample = Nothing
+    , schemaHintsMultipleOf = Nothing
+    , schemaHintsMinItems = Nothing
+    }
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Nothing
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample = Just (String "2016-07-22T07:40:00")
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (BimapCodec
+        _
+        _
+        (StringCodec
+           (Just "LocalTime")
+           StringBounds
+             { stringBoundsMinLength = Nothing
+             , stringBoundsMaxLength = Nothing
+             })))

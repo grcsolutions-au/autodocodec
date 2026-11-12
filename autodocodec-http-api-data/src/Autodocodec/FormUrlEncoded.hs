@@ -78,6 +78,7 @@ toFormVia = flip go
         Left a1 -> goValue a1 c1
         Right a2 -> goValue a2 c2
       CommentCodec _ vc -> goValue a vc
+      SchemaHintsCodec _ vc -> goValue a vc
       ArrayOfCodec _ (vc :: ValueCodec input output) -> map (`goSingleValue` vc) (toList (coerce a :: Vector input))
       vc -> [goSingleValue a vc]
 
@@ -88,6 +89,7 @@ toFormVia = flip go
         Left a1 -> goSingleValue a1 c1
         Right a2 -> goSingleValue a2 c2
       CommentCodec _ vc -> goSingleValue a vc
+      SchemaHintsCodec _ vc -> goSingleValue a vc
       NullCodec -> "null"
       -- Lower case, to match @toUrlPiece \@Bool@ and the HTML form convention,
       -- so that the value survives http-api-data's own parser.
@@ -247,6 +249,7 @@ fromFormViaWith FormDecodeSettings {..} = flip go
                   ]
       ReferenceCodec _ vc -> goValue ts vc
       CommentCodec _ c -> goValue ts c
+      SchemaHintsCodec _ c -> goValue ts c
       ArrayOfCodec _ vc -> coerce $ V.fromList <$> mapM (`goSingleValue` vc) (toList ts)
       vc -> case ts of
         [t] -> goSingleValue t vc
@@ -276,6 +279,7 @@ fromFormViaWith FormDecodeSettings {..} = flip go
                     unwords ["Right: ", rErr]
                   ]
       CommentCodec _ c -> goSingleValue t c
+      SchemaHintsCodec _ c -> goSingleValue t c
       ReferenceCodec _ vc -> goSingleValue t vc
       NullCodec -> coerce $ case t of
         "null" -> Right ()

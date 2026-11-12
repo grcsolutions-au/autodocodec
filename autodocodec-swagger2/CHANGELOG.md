@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+* Support for `SchemaHintsCodec`: titles, formats, examples, `multipleOf` and
+  `minItems` are added to the generated schemas.
+
 ## [0.1.0.1] - 2026-07-14
 
 ### Changed

@@ -1,6 +1,14 @@
-BimapCodec
-  _
-  _
-  (IntegerCodec
-     Nothing
-     Bounds { boundsLower = Just 0 , boundsUpper = Just 4294967295 })
+SchemaHintsCodec
+  SchemaHints
+    { schemaHintsTitle = Nothing
+    , schemaHintsFormat = Just "int32"
+    , schemaHintsExample = Nothing
+    , schemaHintsMultipleOf = Nothing
+    , schemaHintsMinItems = Nothing
+    }
+  (BimapCodec
+     _
+     _
+     (IntegerCodec
+        Nothing
+        Bounds { boundsLower = Just 0 , boundsUpper = Just 4294967295 }))
