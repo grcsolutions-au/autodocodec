@@ -25,6 +25,7 @@ import Data.GenValidity.DNonEmpty ()
 import Data.GenValidity.Scientific ()
 import Data.GenValidity.Text ()
 import Data.GenValidity.Time ()
+import Data.GenValidity.UUID ()
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
@@ -36,6 +37,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import Data.Void (Void)
 import Data.Word
@@ -103,6 +105,9 @@ spec = do
   aesonCodecSpec @TimeOfDay
   aesonCodecSpec @DiffTime
   aesonCodecSpec @NominalDiffTime
+  aesonCodecSpec @UUID
+  aesonCodecErrorSpec @UUID "uuid-error-invalid" "\"not-a-uuid\""
+  aesonCodecErrorSpec @UUID "uuid-error-number" "5"
   aesonCodecSpec @Fruit
   aesonCodecSpec @Shape
   aesonCodecSpec @Example

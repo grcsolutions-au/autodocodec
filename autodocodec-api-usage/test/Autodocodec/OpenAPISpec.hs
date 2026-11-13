@@ -37,6 +37,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -96,6 +97,7 @@ spec = do
   xdescribe "doesn't hold" $ openAPISchemaSpec @ZonedTime "zoned-time"
   openAPISchemaSpec @DiffTime "difftime"
   openAPISchemaSpec @NominalDiffTime "nominal-difftime"
+  openAPISchemaSpecAndViaDeclareSchemaRef @UUID "uuid"
   openAPISchemaSpec @Fruit "fruit"
   openAPISchemaSpecViaDeclareSchemaRef @Fruit "fruit"
   openAPISchemaSpec @Shape "shape"
@@ -189,6 +191,8 @@ spec = do
     openAPIToSchemaEquivalenceSpec @TimeOfDay
     openAPIToSchemaEquivalenceSpec @ZonedTime
     openAPIToSchemaEquivalenceSpec @NominalDiffTime
+    -- Other
+    openAPIToSchemaEquivalenceSpec @UUID
 
 -- | Check that the 'OpenAPI.ToSchema' instance that is defined for @a@ outside
 -- of autodocodec produces exactly the same output as the codec-based one.

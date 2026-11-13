@@ -50,6 +50,7 @@ library
     , text
     , time
     , unordered-containers
+    , uuid-types
     , validity
     , validity-scientific
     , vector

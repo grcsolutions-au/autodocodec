@@ -24,6 +24,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -74,6 +75,7 @@ spec = do
   showCodecSpec @UTCTime "utc-time"
   showCodecSpec @TimeOfDay "time-of-day"
   showCodecSpec @ZonedTime "zoned-time"
+  showCodecSpec @UUID "uuid"
   showCodecSpec @Fruit "fruit"
   showCodecSpec @Shape "shape"
   showCodecSpec @Example "example"

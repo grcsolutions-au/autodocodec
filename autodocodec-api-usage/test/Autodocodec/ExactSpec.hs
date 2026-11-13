@@ -23,6 +23,7 @@ import Data.GenValidity.DNonEmpty ()
 import Data.GenValidity.Scientific ()
 import Data.GenValidity.Text ()
 import Data.GenValidity.Time ()
+import Data.GenValidity.UUID ()
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
@@ -34,6 +35,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
 import Data.Void (Void)
@@ -98,6 +100,8 @@ spec = do
   exactCodecSpec @TimeOfDay
   exactCodecSpec @DiffTime
   exactCodecSpec @NominalDiffTime
+  exactCodecSpec @UUID
+  exactCodecErrorSpec @UUID "uuid-error-invalid" (JSON.String "not-a-uuid")
   exactCodecSpec @Fruit
   exactCodecSpec @Shape
   exactCodecSpec @Example

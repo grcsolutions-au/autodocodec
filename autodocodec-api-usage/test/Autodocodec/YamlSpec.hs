@@ -23,6 +23,7 @@ import Data.GenValidity.DNonEmpty ()
 import Data.GenValidity.Scientific ()
 import Data.GenValidity.Text ()
 import Data.GenValidity.Time ()
+import Data.GenValidity.UUID ()
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
@@ -34,6 +35,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import Data.Void (Void)
 import Data.Word
@@ -88,6 +90,7 @@ spec = do
   yamlCodecSpec @TimeOfDay
   yamlCodecSpec @DiffTime
   yamlCodecSpec @NominalDiffTime
+  yamlCodecSpec @UUID
   yamlCodecSpec @Fruit
   yamlCodecSpec @Shape
   yamlCodecSpec @Example

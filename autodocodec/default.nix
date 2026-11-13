@@ -1,6 +1,6 @@
 { mkDerivation, aeson, base, bytestring, containers, dlist, doctest
 , hashable, lib, mtl, scientific, text, time, unordered-containers
-, validity, validity-scientific, vector
+, uuid-types, validity, validity-scientific, vector
 }:
 mkDerivation {
   pname = "autodocodec";
@@ -8,7 +8,8 @@ mkDerivation {
   src = ./.;
   libraryHaskellDepends = [
     aeson base bytestring containers dlist hashable mtl scientific text
-    time unordered-containers validity validity-scientific vector
+    time unordered-containers uuid-types validity validity-scientific
+    vector
   ];
   testHaskellDepends = [ base doctest ];
   homepage = "https://github.com/NorfairKing/autodocodec#readme";

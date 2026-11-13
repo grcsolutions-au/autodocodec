@@ -39,6 +39,8 @@ import qualified Data.Set as S
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
+import qualified Data.UUID.Types as UUID
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -211,6 +213,16 @@ instance HasCodec ZonedTime where
   codec =
     withFormat "date-time" . withExample (JSON.String "2016-07-22T07:40:00+03:00") $
       unsafeNamedCodecViaAesonString "ZonedTime"
+
+-- | The name, format and example match the openapi3 and swagger2 libraries.
+instance HasCodec UUID where
+  codec =
+    withFormat "uuid" . withExample (JSON.String (UUID.toText UUID.nil)) $
+      bimapCodec parseUUID UUID.toText (StringCodec (Just "UUID") emptyStringBounds)
+    where
+      parseUUID t = case UUID.fromText t of
+        Nothing -> Left $ "Invalid UUID: " <> show t
+        Just u -> Right u
 
 -- | 'NominalDiffTime' has a resolution of one picosecond.
 instance HasCodec NominalDiffTime where

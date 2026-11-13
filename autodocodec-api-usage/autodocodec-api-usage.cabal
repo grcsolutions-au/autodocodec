@@ -40,6 +40,8 @@ extra-source-files:
     test_resources/error/string-with-bounds-error-too-long.txt
     test_resources/error/string-with-bounds-error-too-short.txt
     test_resources/error/text-error-bool.txt
+    test_resources/error/uuid-error-invalid.txt
+    test_resources/error/uuid-error-number.txt
     test_resources/error/word-error-negative.txt
     test_resources/error/word8-error-300.txt
     test_resources/exact-error/bool-error-number.txt
@@ -66,6 +68,7 @@ extra-source-files:
     test_resources/exact-error/these-error-invalid-discriminator.txt
     test_resources/exact-error/these-error-missing-discriminator.txt
     test_resources/exact-error/these-error-unknown-discriminator.txt
+    test_resources/exact-error/uuid-error-invalid.txt
     test_resources/json-object-schema/commented-fields.json
     test_resources/json-object-schema/example.json
     test_resources/json-object-schema/expression.json
@@ -128,6 +131,7 @@ extra-source-files:
     test_resources/json-schema/these.json
     test_resources/json-schema/time-of-day.json
     test_resources/json-schema/utc-time.json
+    test_resources/json-schema/uuid.json
     test_resources/json-schema/value.json
     test_resources/json-schema/very-comment.json
     test_resources/json-schema/via.json
@@ -234,6 +238,7 @@ extra-source-files:
     test_resources/nix/options/these-type.nix
     test_resources/nix/options/time-of-day-type.nix
     test_resources/nix/options/utc-time-type.nix
+    test_resources/nix/options/uuid-type.nix
     test_resources/nix/options/value-type.nix
     test_resources/nix/options/very-comment-type.nix
     test_resources/nix/options/via-options.nix
@@ -271,6 +276,7 @@ extra-source-files:
     test_resources/openapi-schema/declareSchemaRef/semigroup-last.json
     test_resources/openapi-schema/declareSchemaRef/shape.json
     test_resources/openapi-schema/declareSchemaRef/these.json
+    test_resources/openapi-schema/declareSchemaRef/uuid.json
     test_resources/openapi-schema/declareSchemaRef/very-comment.json
     test_resources/openapi-schema/declareSchemaRef/via.json
     test_resources/openapi-schema/declareSchemaRef/void.json
@@ -324,6 +330,7 @@ extra-source-files:
     test_resources/openapi-schema/these.json
     test_resources/openapi-schema/time-of-day.json
     test_resources/openapi-schema/utc-time.json
+    test_resources/openapi-schema/uuid.json
     test_resources/openapi-schema/value.json
     test_resources/openapi-schema/vector-text.json
     test_resources/openapi-schema/very-comment.json
@@ -387,6 +394,7 @@ extra-source-files:
     test_resources/show-codec/these.txt
     test_resources/show-codec/time-of-day.txt
     test_resources/show-codec/utc-time.txt
+    test_resources/show-codec/uuid.txt
     test_resources/show-codec/value.txt
     test_resources/show-codec/vector-text.txt
     test_resources/show-codec/very-comment.txt
@@ -453,6 +461,7 @@ extra-source-files:
     test_resources/swagger-schema/these.json
     test_resources/swagger-schema/time-of-day.json
     test_resources/swagger-schema/utc-time.json
+    test_resources/swagger-schema/uuid.json
     test_resources/swagger-schema/value.json
     test_resources/swagger-schema/vector-text.json
     test_resources/swagger-schema/very-comment.json
@@ -531,6 +540,7 @@ extra-source-files:
     test_resources/yaml-schema-plain/these.txt
     test_resources/yaml-schema-plain/time-of-day.txt
     test_resources/yaml-schema-plain/utc-time.txt
+    test_resources/yaml-schema-plain/uuid.txt
     test_resources/yaml-schema-plain/value.txt
     test_resources/yaml-schema-plain/very-comment.txt
     test_resources/yaml-schema-plain/via.txt
@@ -588,6 +598,7 @@ extra-source-files:
     test_resources/yaml-schema/these.txt
     test_resources/yaml-schema/time-of-day.txt
     test_resources/yaml-schema/utc-time.txt
+    test_resources/yaml-schema/uuid.txt
     test_resources/yaml-schema/value.txt
     test_resources/yaml-schema/very-comment.txt
     test_resources/yaml-schema/via.txt
@@ -690,6 +701,7 @@ test-suite autodocodec-api-usage-test
     , genvalidity-sydtest-aeson
     , genvalidity-text
     , genvalidity-time
+    , genvalidity-uuid
     , http-api-data
     , openapi3
     , path
@@ -704,6 +716,7 @@ test-suite autodocodec-api-usage-test
     , text
     , time
     , unordered-containers
+    , uuid-types
     , vector
     , yaml
   default-language: Haskell2010

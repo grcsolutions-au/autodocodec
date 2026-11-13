@@ -1,0 +1,26 @@
+SchemaHintsCodec
+  SchemaHints
+    { schemaHintsTitle = Nothing
+    , schemaHintsFormat = Just "uuid"
+    , schemaHintsExample = Nothing
+    , schemaHintsMultipleOf = Nothing
+    , schemaHintsMinItems = Nothing
+    }
+  (SchemaHintsCodec
+     SchemaHints
+       { schemaHintsTitle = Nothing
+       , schemaHintsFormat = Nothing
+       , schemaHintsExample =
+           Just (String "00000000-0000-0000-0000-000000000000")
+       , schemaHintsMultipleOf = Nothing
+       , schemaHintsMinItems = Nothing
+       }
+     (BimapCodec
+        _
+        _
+        (StringCodec
+           (Just "UUID")
+           StringBounds
+             { stringBoundsMinLength = Nothing
+             , stringBoundsMaxLength = Nothing
+             })))

@@ -13,6 +13,10 @@ match on every constructor need a case for it.
 * `withTitle`, `withFormat`, `withExample`, `withMultipleOf` and `withMinItems`.
 * `unsafeNamedCodecViaAesonString`, which names the string codec instead of
   commenting it.
+* A `HasCodec` instance for `UUID` from `uuid-types`.
+  Its OpenAPI and Swagger schemas match the ones from the `openapi3` and
+  `swagger2` libraries.
+  `uuid-types` is a new dependency, but `aeson` already depends on it.
 
 ### Changed
 

@@ -86,6 +86,7 @@ tests:
     - genvalidity-sydtest-aeson
     - genvalidity-text
     - genvalidity-time
+    - genvalidity-uuid
     - http-api-data
     - openapi3
     - path
@@ -100,6 +101,7 @@ tests:
     - text
     - unordered-containers
     - time
+    - uuid-types
     - yaml
     - vector
 

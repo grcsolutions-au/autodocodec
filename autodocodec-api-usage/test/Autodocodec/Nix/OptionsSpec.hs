@@ -27,6 +27,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Void
 import Data.Word
 import Numeric.Natural
@@ -75,6 +76,7 @@ spec = do
   nixOptionTypeSpec @TimeOfDay "time-of-day"
   nixOptionTypeSpec @NominalDiffTime "nominal-difftime"
   nixOptionTypeSpec @DiffTime "difftime"
+  nixOptionTypeSpec @UUID "uuid"
   nixOptionTypeSpec @Fruit "fruit"
   nixOptionTypeSpec @Shape "shape"
   nixOptionTypeSpec @Example "example"

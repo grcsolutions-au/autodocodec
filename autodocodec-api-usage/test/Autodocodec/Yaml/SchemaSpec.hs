@@ -18,6 +18,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Void
 import Data.Word
 import Numeric.Natural
@@ -66,6 +67,7 @@ spec = do
   yamlSchemaSpec @ZonedTime "zoned-time"
   yamlSchemaSpec @DiffTime "difftime"
   yamlSchemaSpec @NominalDiffTime "nominal-difftime"
+  yamlSchemaSpec @UUID "uuid"
   yamlSchemaSpec @Fruit "fruit"
   yamlSchemaSpec @Shape "shape"
   yamlSchemaSpec @Example "example"

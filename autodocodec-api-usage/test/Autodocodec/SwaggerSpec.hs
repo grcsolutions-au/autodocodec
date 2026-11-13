@@ -24,6 +24,7 @@ import Data.GenValidity.DNonEmpty ()
 import Data.GenValidity.Scientific ()
 import Data.GenValidity.Text ()
 import Data.GenValidity.Time ()
+import Data.GenValidity.UUID ()
 import Data.Int
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
@@ -40,6 +41,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Data.Time
+import Data.UUID.Types (UUID)
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -93,6 +95,7 @@ spec = do
   swaggerSchemaSpec' @ZonedTime "zoned-time"
   swaggerSchemaSpec @DiffTime "difftime"
   swaggerSchemaSpec @NominalDiffTime "nominal-difftime"
+  swaggerSchemaSpec @UUID "uuid"
   swaggerSchemaSpec @Fruit "fruit"
   swaggerSchemaSpec @Shape "shape"
   swaggerSchemaSpec @Example "example"
@@ -126,6 +129,25 @@ spec = do
   swaggerSchemaSpec @(Monoid.Last Text) "monoid-last"
   swaggerSchemaSpec @(Const Text Void) "const"
   xdescribe "does not hold because of overlap" $ swaggerSchemaSpec @Overlap "overlap"
+  describe "ToSchema equivalence" $
+    swaggerToSchemaEquivalenceSpec @UUID
+
+-- | Check that the 'Swagger.ToSchema' instance that is defined for @a@ outside
+-- of autodocodec produces exactly the same output as the codec-based one.
+swaggerToSchemaEquivalenceSpec ::
+  forall a.
+  (Typeable a, HasCodec a, Swagger.ToSchema a) =>
+  Spec
+swaggerToSchemaEquivalenceSpec =
+  describe ("swaggerToSchemaEquivalenceSpec @" <> nameOf @a) $ do
+    it "has the same declareNamedSchema" $
+      let native = Swagger.runDeclare (Swagger.declareNamedSchema (Proxy :: Proxy a)) mempty
+          viaCodec = Swagger.runDeclare (declareNamedSchemaViaCodec (Proxy :: Proxy a)) mempty
+       in viaCodec `shouldBe` native
+    it "has the same declareSchemaRef" $
+      let native = Swagger.runDeclare (Swagger.declareSchemaRef (Proxy :: Proxy a)) mempty
+          viaCodec = Swagger.runDeclare (Swagger.declareSchemaRef (Proxy :: Proxy (AutodocodecSwagger a))) mempty
+       in viaCodec `shouldBe` native
 
 swaggerSchemaSpec :: forall a. (Show a, Typeable a, GenValid a, HasCodec a) => FilePath -> Spec
 swaggerSchemaSpec filePath =
